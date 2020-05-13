@@ -1,0 +1,4 @@
+rootProject.name = 'bookit'
+
+include 'bookit-api'
+
