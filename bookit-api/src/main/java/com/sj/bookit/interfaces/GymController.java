@@ -38,10 +38,26 @@ public class GymController {
         String name = resource.getName();
         String address = resource.getAddress();
 
-        Gym gym = new Gym(1234L, name, address);
+        Gym gym = gymService.addGym(
+                Gym.builder()
+                .name(name)
+                .address(address)
+                .build());
+
         gymService.addGym(gym);
 
-        URI location = new URI("/gyms/" + gym.getID());
+        URI location = new URI("/gyms/" + gym.getId());
         return ResponseEntity.created(location).body("{}");
+    }
+
+
+    @PatchMapping("/gyms/{id}")
+    public String update(@PathVariable("id") Long id,
+                         @RequestBody Gym resource) {
+        String name = resource.getName();
+        String address = resource.getAddress();
+        gymService.updateGym(id, name, address);
+
+        return "{}";
     }
 }

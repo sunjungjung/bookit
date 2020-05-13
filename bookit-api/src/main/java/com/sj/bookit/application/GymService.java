@@ -7,6 +7,7 @@ import com.sj.bookit.domain.TypeItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -35,12 +36,24 @@ public class GymService {
         Gym gym = gymRepository.findById(id).orElse(null);
 
         List<TypeItem> typeItems = typeItemRepository.findAllByGymId(id);
-        gym.setGymItems(typeItems);
+        gym.setTypeItems(typeItems);
 
         return gym;
     }
 
     public Gym addGym(Gym gym) {
         return gymRepository.save(gym);
+    }
+
+    @Transactional
+    public Gym updateGym(Long id, String name, String address) {
+        //Todo: update Gym
+
+        Gym gym = gymRepository.findById(id).orElse(null);
+
+        gym.updateInformation(name, address);
+
+
+        return gym;
     }
 }

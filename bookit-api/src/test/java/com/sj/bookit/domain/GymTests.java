@@ -9,9 +9,13 @@ class GymTests {
 
     @Test
     public void creation() {
-        Gym gym = new Gym(1001L, "work out", "Seoul");
+        Gym gym = Gym.builder()
+                .id(1001L)
+                .name("work out")
+                .address("Seoul")
+                .build();
 
-        assertThat(gym.getID(), is(1001L));
+        assertThat(gym.getId(), is(1001L));
         assertThat(gym.getName(), is("work out"));
         assertThat(gym.getAddress(), is("Seoul"));
     }

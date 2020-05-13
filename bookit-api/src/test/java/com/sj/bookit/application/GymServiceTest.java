@@ -46,7 +46,12 @@ class GymServiceTest {
 
     private void mockGymRepository() {
         List<Gym> gyms = new ArrayList<>();
-        Gym gym = new Gym(1001L, "work out", "Seoul");
+        Gym gym = Gym.builder()
+                .id(1001L)
+                .address("Seoul")
+                .name("work out")
+                .typeItems(new ArrayList<TypeItem>())
+                .build();
         gyms.add(gym);
 
         given(gymRepository.findAll()).willReturn(gyms);
@@ -61,7 +66,7 @@ class GymServiceTest {
         List<Gym> gyms = gymService.getGyms();
 
         Gym gym = gyms.get(0);
-        assertThat(gym.getID(), is(1001L));
+        assertThat(gym.getId(), is(1001L));
     }
 
 
@@ -69,7 +74,7 @@ class GymServiceTest {
     public void getGym() {
         Gym gym = gymService.getGym(1001L);
 
-        assertThat(gym.getID(), is(1001L));
+        assertThat(gym.getId(), is(1001L));
 
         TypeItem typeItem = gym.getTypeItems().get(0);
 
@@ -79,13 +84,43 @@ class GymServiceTest {
 
     @Test
     public void addGym() {
-        Gym gym = new Gym("Lynn", "Busan");
-        Gym saved = new Gym(1234L, "Lynn", "Busan");
+        given(gymRepository.save(any())).will(invocation -> {
+            Gym gym = invocation.getArgument(0);
+            gym.setId(1234L);
+            return gym;
+        });
 
-        given(gymRepository.save(any())).willReturn(gym);
+        Gym gym = Gym.builder()
+                .name("Lynn")
+                .address("Busan")
+                .build();
+
+        Gym saved = Gym.builder()
+                .id(1234L)
+                .name("Lynn")
+                .address("Busan")
+                .build();
+
 
         Gym created = gymService.addGym(gym);
 
-//        assertThat(created.getID(), is(1234L));
+        assertThat(created.getId(), is(1234L));
+    }
+
+    @Test
+    public void updateGym() {
+        Gym gym = Gym.builder()
+                .id(1001L)
+                .name("work out")
+                .address("Seoul")
+                .build();
+
+        given(gymRepository.findById(1001L))
+                .willReturn(Optional.of(gym));
+
+        gymService.updateGym(1001L, "woo", "Ssss");
+
+        assertThat(gym.getName(), is("woo"));
+        assertThat(gym.getAddress(), is("Ssss"));
     }
 }

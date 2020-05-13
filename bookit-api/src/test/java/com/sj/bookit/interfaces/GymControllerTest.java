@@ -11,14 +11,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.core.StringContains.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -31,16 +31,14 @@ class GymControllerTest {
     @MockBean
     private GymService gymService;
 
-//    @SpyBean(GymRepositoryImpl.class)
-//    private GymRepositoryImpl gymRepository;
-//
-//    @SpyBean(TypeItemRepositorImpl.class)
-//    private TypeItemRepository typeItemRepository;
-
     @Test
     public void list() throws Exception {
         List<Gym> gyms = new ArrayList<>();
-        gyms.add(new Gym(1001L, "work out", "Seoul"));
+        gyms.add(Gym.builder()
+                .id(1001L)
+                .name("work out")
+                .address("Seoul")
+                .build());
 
         given(gymService.getGyms()).willReturn(gyms);
 
@@ -60,9 +58,14 @@ class GymControllerTest {
 
     @Test
     public void detail() throws Exception {
-        Gym gym = new Gym(1001L, "work out", "Seoul");
-        gym.addTypeItem(new TypeItem("Jogging"));
+        Gym gym = Gym.builder()
+                .id(1001L)
+                .address("Seoul")
+                .name("work out")
+                .typeItems(new ArrayList<TypeItem>())
+                .build();
 
+        gym.setTypeItems(Arrays.asList(new TypeItem("Jogging")));
         given(gymService.getGym(1001L)).willReturn(gym);
 
         mvc.perform(get("/gyms/1001"))
@@ -78,6 +81,16 @@ class GymControllerTest {
 
     @Test
     public void create() throws Exception {
+        given(gymService.addGym(any())).will(invocation -> {
+            Gym gym = invocation.getArgument(0);
+            return Gym.builder()
+                    .id(1234L)
+                    .name(gym.getName())
+                    .address(gym.getAddress())
+                    .build();
+        });
+
+
         mvc.perform(post("/gyms")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"Lynn\",\"address\":\"Busan\"}"))
@@ -86,6 +99,20 @@ class GymControllerTest {
                 .andExpect(content().string("{}"));
 
         verify(gymService).addGym(any());
+    }
+
+
+    @Test
+    public void update() throws Exception {
+
+
+        mvc.perform(patch("/gyms/1001")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"work out st\",\"address\":\"Seoul\"}")
+        )
+                .andExpect(status().isOk());
+
+        verify(gymService).updateGym(1001L, "work out st", "Seoul");
     }
 
 }

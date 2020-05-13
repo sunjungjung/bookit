@@ -1,5 +1,7 @@
 package com.sj.bookit.domain;
 
+import lombok.*;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -8,19 +10,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Gym {
     @Id
     @GeneratedValue
+    @Setter
     private Long id;
 
     private String name;
+
     private String address;
+
+//    private String regionName; //Seoul
+//    private String categoryName;
+//    private String tagNames;
 
     @Transient
     private List<TypeItem> typeItems = new ArrayList<TypeItem>();
 
-    public Gym() {
-    }
 
     public Gym(String name, String address) {
         this.name = name;
@@ -33,37 +43,25 @@ public class Gym {
         this.address = address;
     }
 
-    public void setID(long id) {
-        this.id = id;
-    }
-
-    public Long getID() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getAddress() {
-        return address;
-    }
 
     public String getInformation() {
         return name + " in " + address;
     }
 
-    public List<TypeItem> getTypeItems() {
-        return typeItems;
+
+
+    public void setTypeItems(List<TypeItem> typeItems) {
+
+        this.typeItems = new ArrayList<>(typeItems);
+
     }
 
-    public void addTypeItem(TypeItem typeItem) {
-        typeItems.add(typeItem);
+
+    public void updateInformation(String name, String address) {
+
+        this.name = name;
+        this.address = address;
+
     }
 
-    public void setGymItems(List<TypeItem> typeItems) {
-        for (TypeItem typeItem : typeItems) {
-            addTypeItem((typeItem));
-        }
-    }
 }
