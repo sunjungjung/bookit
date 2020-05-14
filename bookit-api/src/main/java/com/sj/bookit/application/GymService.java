@@ -1,9 +1,6 @@
 package com.sj.bookit.application;
 
-import com.sj.bookit.domain.Gym;
-import com.sj.bookit.domain.GymRepository;
-import com.sj.bookit.domain.TypeItem;
-import com.sj.bookit.domain.TypeItemRepository;
+import com.sj.bookit.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +30,8 @@ public class GymService {
 
 
     public Gym getGym(Long id) {
-        Gym gym = gymRepository.findById(id).orElse(null);
+        Gym gym = gymRepository.findById(id)
+                .orElseThrow(() -> new GymNotFoundException(id));
 
         List<TypeItem> typeItems = typeItemRepository.findAllByGymId(id);
         gym.setTypeItems(typeItems);

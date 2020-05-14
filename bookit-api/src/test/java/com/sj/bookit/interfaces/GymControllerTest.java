@@ -57,7 +57,7 @@ class GymControllerTest {
 
 
     @Test
-    public void detail() throws Exception {
+    public void detailWithExisting() throws Exception {
         Gym gym = Gym.builder()
                 .id(1001L)
                 .address("Seoul")
@@ -65,7 +65,10 @@ class GymControllerTest {
                 .typeItems(new ArrayList<TypeItem>())
                 .build();
 
-        gym.setTypeItems(Arrays.asList(new TypeItem("Jogging")));
+        TypeItem typeItem = TypeItem.builder()
+                .name("Jogging")
+                .build();
+        gym.setTypeItems(Arrays.asList(typeItem));
         given(gymService.getGym(1001L)).willReturn(gym);
 
         mvc.perform(get("/gyms/1001"))
@@ -78,9 +81,18 @@ class GymControllerTest {
                 ));
     }
 
+    @Test
+    public void detailWithNotExisting() throws Exception {
+        given(gymService.getGym(404L))
+                .willThrow(new GymNotFoundException(404L));
+        mvc.perform(get("/gyms/404"))
+                .andExpect(status().isNotFound())
+        .andExpect(content().string("{}"));
+    }
+
 
     @Test
-    public void create() throws Exception {
+    public void createWithValidData() throws Exception {
         given(gymService.addGym(any())).will(invocation -> {
             Gym gym = invocation.getArgument(0);
             return Gym.builder()
@@ -101,18 +113,30 @@ class GymControllerTest {
         verify(gymService).addGym(any());
     }
 
+    @Test
+    public void createWithInvalidData() throws Exception {
+        mvc.perform(post("/gyms")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"\",\"address\":\"\"}"))
+                .andExpect(status().isBadRequest());
+
+    }
 
     @Test
-    public void update() throws Exception {
-
-
+    public void updateWithValidData() throws Exception {
         mvc.perform(patch("/gyms/1001")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"name\":\"work out st\",\"address\":\"Seoul\"}")
-        )
+                .content("{\"name\":\"work out st\",\"address\":\"Seoul\"}"))
                 .andExpect(status().isOk());
 
         verify(gymService).updateGym(1001L, "work out st", "Seoul");
     }
 
+    @Test
+    public void updateWithInvalidData() throws Exception {
+        mvc.perform(patch("/gyms/1001")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"\",\"address\":\"\"}"))
+                .andExpect(status().isBadRequest());
+    }
 }

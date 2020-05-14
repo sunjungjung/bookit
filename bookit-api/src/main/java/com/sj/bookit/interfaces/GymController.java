@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -34,17 +35,14 @@ public class GymController {
     }
 
     @PostMapping("/gyms")
-    public ResponseEntity<?> create(@RequestBody Gym resource) throws URISyntaxException {
-        String name = resource.getName();
-        String address = resource.getAddress();
+    public ResponseEntity<?> create(@Valid @RequestBody Gym resource) throws URISyntaxException {
 
         Gym gym = gymService.addGym(
                 Gym.builder()
-                .name(name)
-                .address(address)
+                .name(resource.getName())
+                .address(resource.getAddress())
                 .build());
 
-        gymService.addGym(gym);
 
         URI location = new URI("/gyms/" + gym.getId());
         return ResponseEntity.created(location).body("{}");
@@ -53,7 +51,7 @@ public class GymController {
 
     @PatchMapping("/gyms/{id}")
     public String update(@PathVariable("id") Long id,
-                         @RequestBody Gym resource) {
+                         @Valid @RequestBody Gym resource) {
         String name = resource.getName();
         String address = resource.getAddress();
         gymService.updateGym(id, name, address);

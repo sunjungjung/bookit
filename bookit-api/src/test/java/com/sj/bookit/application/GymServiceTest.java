@@ -37,7 +37,9 @@ class GymServiceTest {
 
     private void mockTypeItemRepository() {
         List<TypeItem> typeItems = new ArrayList<>();
-        typeItems.add(new TypeItem("Jogging"));
+        typeItems.add(TypeItem.builder()
+                .name("Jogging")
+                .build());
         given(typeItemRepository.findAllByGymId(1001L))
                 .willReturn(typeItems);
 
@@ -71,7 +73,7 @@ class GymServiceTest {
 
 
     @Test
-    public void getGym() {
+    public void getGymWithExisting() {
         Gym gym = gymService.getGym(1001L);
 
         assertThat(gym.getId(), is(1001L));
@@ -79,6 +81,11 @@ class GymServiceTest {
         TypeItem typeItem = gym.getTypeItems().get(0);
 
         assertThat(typeItem.getName(), is("Jogging"));
+    }
+
+    @Test(expected = GymNotFoundException.class) //19
+    public void getGymWithNotExisting() {
+        gymService.getGym(404L);
     }
 
 

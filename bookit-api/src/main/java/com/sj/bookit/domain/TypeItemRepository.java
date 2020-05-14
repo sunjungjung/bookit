@@ -6,4 +6,6 @@ import java.util.List;
 public interface TypeItemRepository extends CrudRepository<TypeItem, Long>{
     List<TypeItem> findAllByGymId(Long gymId);
 
+    void deleteById(Long id);
+
 }

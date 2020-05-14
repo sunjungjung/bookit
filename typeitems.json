@@ -1,0 +1,14 @@
+[
+  {
+    "id": 2,
+    "name": "Jogging"
+  },
+  {
+    "id": 3,
+    "destroy": true
+  },
+  {
+    "name": "climbing"
+  }
+
+]

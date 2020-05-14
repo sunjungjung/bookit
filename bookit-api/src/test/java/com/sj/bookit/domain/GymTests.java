@@ -22,7 +22,11 @@ class GymTests {
 
     @Test
     public void information() {
-        Gym gym = new Gym(1001L, "work out", "Seoul");
+        Gym gym = Gym.builder()
+                .id(1001L)
+                .name("work out")
+                .address("Seoul")
+                .build();
 
         assertThat(gym.getInformation(), is("work out in Seoul"));
     }
