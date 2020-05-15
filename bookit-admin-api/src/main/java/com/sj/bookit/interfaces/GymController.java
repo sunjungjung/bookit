@@ -52,9 +52,10 @@ public class GymController {
     @PatchMapping("/gyms/{id}")
     public String update(@PathVariable("id") Long id,
                          @Valid @RequestBody Gym resource) {
+        Long categoryId = resource.getCategoryId();
         String name = resource.getName();
         String address = resource.getAddress();
-        gymService.updateGym(id, name, address);
+        gymService.updateGym(id, categoryId, name, address);
 
         return "{}";
     }

@@ -28,12 +28,12 @@ class TypeItemControllerTest {
 
     @Test
     public void bulkUpdate() throws Exception {
-        mvc.perform(patch("/gyms/1/typeitems")
+        mvc.perform(patch("/gyms/12/typeitems")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("[]"))
                 .andExpect(status().isOk());
 
-        verify(typeItemService).bulkUpdate(eq(1L), any());
+        verify(typeItemService).bulkUpdate(eq(12L), any());
     }
 
 }

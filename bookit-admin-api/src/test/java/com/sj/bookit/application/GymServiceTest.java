@@ -3,6 +3,7 @@ package com.sj.bookit.application;
 import com.sj.bookit.domain.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -21,34 +22,27 @@ import static org.mockito.Mockito.verify;
 
 class GymServiceTest {
 
+    @InjectMocks
     private GymService gymService;
 
     @Mock
     private GymRepository gymRepository;
-
-    @Mock
-    private TypeItemRepository typeItemRepository;
-
-    @Mock
-    private ReviewRepository reviewRepository;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
         mockGymRepository();
-        mockTypeItemRepository();
 
-        gymService = new GymService(gymRepository, typeItemRepository, reviewRepository);
     }
 
     private void mockGymRepository() {
         List<Gym> gyms = new ArrayList<>();
         Gym gym = Gym.builder()
                 .id(1001L)
+                .categoryId(1L)
                 .address("Seoul")
                 .name("work out")
-                .typeItems(new ArrayList<TypeItem>())
                 .build();
         gyms.add(gym);
 
@@ -56,29 +50,6 @@ class GymServiceTest {
 
         given(gymRepository.findById(1001L)).willReturn(Optional.of(gym));
 
-    }
-
-    private void mockTypeItemRepository() {
-        List<TypeItem> typeItems = new ArrayList<>();
-        typeItems.add(TypeItem.builder()
-                .name("Jogging")
-                .build());
-        given(typeItemRepository.findAllByGymId(1001L))
-                .willReturn(typeItems);
-
-
-    }
-
-    private void mockReviewRepository() {
-        List<Review> reviews = new ArrayList<>();
-        reviews.add(Review.builder()
-                .name("anno")
-                .score(1)
-                .description("bad")
-                .build());
-
-        given(reviewRepository.findAllByGymId(1001L))
-                .willReturn(reviews);
     }
 
 
@@ -96,22 +67,11 @@ class GymServiceTest {
     public void getGymWithExisting() {
         Gym gym = gymService.getGym(1001L);
 
-        verify(typeItemRepository).findAllByGymId(eq(1001L));
-        verify(reviewRepository).findAllByGymId(eq(1001L));
-
         assertThat(gym.getId(), is(1001L));
-
-        TypeItem typeItem = gym.getTypeItems().get(0);
-
-        assertThat(typeItem.getName(), is("Jogging"));
-
-        Review review = gym.getReviews().get(0);
-
-        assertThat(review.getDescription(), is("diff"));
-
 
     }
 
+    //TODO: handle error
 //    @Test
 //    public void getGymWithNotExisting() {
 //
@@ -139,13 +99,6 @@ class GymServiceTest {
                 .address("Busan")
                 .build();
 
-        Gym saved = Gym.builder()
-                .id(1234L)
-                .name("Lynn")
-                .address("Busan")
-                .build();
-
-
         Gym created = gymService.addGym(gym);
 
         assertThat(created.getId(), is(1234L));
@@ -162,7 +115,7 @@ class GymServiceTest {
         given(gymRepository.findById(1001L))
                 .willReturn(Optional.of(gym));
 
-        gymService.updateGym(1001L, "woo", "Ssss");
+        gymService.updateGym(1001L, 1L, "woo", "Ssss");
 
         assertThat(gym.getName(), is("woo"));
         assertThat(gym.getAddress(), is("Ssss"));

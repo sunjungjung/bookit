@@ -1,22 +1,21 @@
 package com.sj.bookit.application;
 
 import com.sj.bookit.domain.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 public class GymService {
 
     private final GymRepository gymRepository;
-    private final TypeItemRepository typeItemRepository;
-    private final ReviewRepository reviewRepository;
 
-    public GymService(GymRepository gymRepository, TypeItemRepository typeItemRepository, ReviewRepository reviewRepository) {
+    @Autowired
+    public GymService(GymRepository gymRepository) {
         this.gymRepository = gymRepository;
-        this.typeItemRepository = typeItemRepository;
-        this.reviewRepository = reviewRepository;
     }
 
 
@@ -31,11 +30,6 @@ public class GymService {
         Gym gym = gymRepository.findById(id)
                 .orElseThrow(() -> new GymNotFoundException(id));
 
-        List<TypeItem> typeItems = typeItemRepository.findAllByGymId(id);
-        gym.setTypeItems(typeItems);
-
-        List<Review> reviews = reviewRepository.findAllByGymId(id);
-        gym.setReviews(reviews);
 
         return gym;
     }
@@ -45,12 +39,12 @@ public class GymService {
     }
 
     @Transactional
-    public Gym updateGym(Long id, String name, String address) {
+    public Gym updateGym(Long id, Long categoryId, String name, String address) {
         //Todo: update Gym
 
         Gym gym = gymRepository.findById(id).orElse(null);
 
-        gym.updateInformation(name, address);
+        gym.updateInformation(categoryId, name, address);
 
 
         return gym;

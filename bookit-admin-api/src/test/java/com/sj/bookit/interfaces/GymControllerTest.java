@@ -49,9 +49,6 @@ class GymControllerTest {
                 ))
                 .andExpect(content().string(
                         containsString("\"name\":\"work out\"")
-//                ))
-//        .andExpect(content().string(
-//                containsString("Jogging")
         ));
     }
 
@@ -62,20 +59,7 @@ class GymControllerTest {
                 .id(1001L)
                 .address("Seoul")
                 .name("work out")
-                .typeItems(new ArrayList<TypeItem>())
                 .build();
-
-        TypeItem typeItem = TypeItem.builder()
-                .name("Jogging")
-                .build();
-
-        gym.setTypeItems(Arrays.asList(typeItem));
-        Review review = Review.builder()
-                .name("doe")
-                .score(3)
-                .description("great")
-                .build();
-        gym.setReviews(Arrays.asList(review));
 
         given(gymService.getGym(1001L)).willReturn(gym);
 
@@ -86,12 +70,6 @@ class GymControllerTest {
                 ))
                 .andExpect(content().string(
                         containsString("\"name\":\"work out\"")
-                ))
-                .andExpect(content().string(
-                        containsString("jogging")
-                ))
-                .andExpect((content().string(
-                        containsString("great"))
         ));
     }
 
@@ -143,7 +121,7 @@ class GymControllerTest {
                 .content("{\"name\":\"work out st\",\"address\":\"Seoul\"}"))
                 .andExpect(status().isOk());
 
-        verify(gymService).updateGym(1001L, "work out st", "Seoul");
+        verify(gymService).updateGym(1001L, 1L, "work out st", "Seoul");
     }
 
     @Test
@@ -151,6 +129,14 @@ class GymControllerTest {
         mvc.perform(patch("/gyms/1001")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\":\"\",\"address\":\"\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void updateWithoutName() throws Exception {
+        mvc.perform(patch("/restaurants/1004")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"\",\"address\":\"Busan\"}"))
                 .andExpect(status().isBadRequest());
     }
 }

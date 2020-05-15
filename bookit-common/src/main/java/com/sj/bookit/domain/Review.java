@@ -36,6 +36,6 @@ public class Review {
     @NotEmpty
     private String description;
 
-    public void setGymId(Long gymId) {
-    }
+//    public void setGymId(Long gymId) {
+//    }
 }
