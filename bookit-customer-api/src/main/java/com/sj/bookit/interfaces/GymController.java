@@ -20,8 +20,11 @@ public class GymController {
 
 
     @GetMapping("/gyms")
-    public List<Gym> list() {
-        List<Gym> gyms = gymService.getGyms();
+    public List<Gym> list(
+            @RequestParam("region") String region,
+            @RequestParam("category") Long categoryId
+    ) {
+        List<Gym> gyms = gymService.getGyms(region, categoryId);
 
         return gyms;
     }
@@ -34,28 +37,28 @@ public class GymController {
         return gym;
     }
 
-    @PostMapping("/gyms")
-    public ResponseEntity<?> create(@Valid @RequestBody Gym resource) throws URISyntaxException {
-
-        Gym gym = gymService.addGym(
-                Gym.builder()
-                .name(resource.getName())
-                .address(resource.getAddress())
-                .build());
-
-
-        URI location = new URI("/gyms/" + gym.getId());
-        return ResponseEntity.created(location).body("{}");
-    }
-
-
-    @PatchMapping("/gyms/{id}")
-    public String update(@PathVariable("id") Long id,
-                         @Valid @RequestBody Gym resource) {
-        String name = resource.getName();
-        String address = resource.getAddress();
-        gymService.updateGym(id, name, address);
-
-        return "{}";
-    }
+//    @PostMapping("/gyms")
+//    public ResponseEntity<?> create(@Valid @RequestBody Gym resource) throws URISyntaxException {
+//
+//        Gym gym = gymService.addGym(
+//                Gym.builder()
+//                .name(resource.getName())
+//                .address(resource.getAddress())
+//                .build());
+//
+//
+//        URI location = new URI("/gyms/" + gym.getId());
+//        return ResponseEntity.created(location).body("{}");
+//    }
+//
+//
+//    @PatchMapping("/gyms/{id}")
+//    public String update(@PathVariable("id") Long id,
+//                         @Valid @RequestBody Gym resource) {
+//        String name = resource.getName();
+//        String address = resource.getAddress();
+//        gymService.updateGym(id, name, address);
+//
+//        return "{}";
+//    }
 }

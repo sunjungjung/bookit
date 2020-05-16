@@ -5,35 +5,37 @@ import lombok.*;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
-
+import javax.validation.constraints.NotNull;
 
 @Entity
-@Builder
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Review {
+public class Reservation {
 
     @Id
     @GeneratedValue
     private Long id;
 
+    private Long restaurantId;
+
+    private Long userId;
+
     @Setter
-    private Long gymId;
-
-    @NotEmpty
     private String name;
-//
-//    @Max(5)
-//    @Min(0)
-    @NotEmpty
-    private Integer score;
 
-
+    @Setter
     @NotEmpty
-    private String description;
+    private String date;
+
+    @Setter
+    @NotEmpty
+    private String time;
+
+    @Setter
+    @NotNull
+    private Integer partySize;
 
 }

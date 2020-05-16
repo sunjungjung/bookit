@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -35,8 +36,7 @@ class GymServiceTest {
 
         mockGymRepository();
         mockTypeItemRepository();
-
-        gymService = new GymService(gymRepository, typeItemRepository, reviewRepository);
+        mockReviewRepository();
     }
 
     private void mockGymRepository() {
@@ -81,7 +81,10 @@ class GymServiceTest {
 
     @Test
     public void getGyms() {
-        List<Gym> gyms = gymService.getGyms();
+        String region = "Seoul";
+        Long categoryId = 1L;
+
+        List<Gym> gyms = gymService.getGyms(region, categoryId);
 
         Gym gym = gyms.get(0);
 
@@ -159,7 +162,7 @@ class GymServiceTest {
         given(gymRepository.findById(1001L))
                 .willReturn(Optional.of(gym));
 
-        gymService.updateGym(1001L, "woo", "Ssss");
+        gymService.updateGym(1001L, 2L,"woo", "Ssss");
 
         assertThat(gym.getName(), is("woo"));
         assertThat(gym.getAddress(), is("Ssss"));

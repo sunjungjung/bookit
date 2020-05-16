@@ -1,7 +1,14 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+    }
+}
+
 rootProject.name = 'bookit'
 
 include 'bookit-common'
 include 'bookit-admin-api'
 include 'bookit-customer-api'
-include 'bookit-customer-api'
+include 'bookit-login-api'
+include 'bookit-gym-api'
 

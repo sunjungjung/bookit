@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 public class GymService {
 
     private final GymRepository gymRepository;
@@ -20,8 +21,8 @@ public class GymService {
     }
 
 
-    public List<Gym> getGyms() {
-        List<Gym> gyms = gymRepository.findAll();
+    public List<Gym> getGyms(String region, long categoryId) {
+        List<Gym> gyms = gymRepository.findAllByAddressContainingAndCategoryId(region, categoryId);
 
         return gyms;
     }
@@ -44,13 +45,12 @@ public class GymService {
         return gymRepository.save(gym);
     }
 
-    @Transactional
-    public Gym updateGym(Long id, String name, String address) {
+    public Gym updateGym(Long id, Long categoryId, String name, String address) {
         //Todo: update Gym
 
         Gym gym = gymRepository.findById(id).orElse(null);
 
-        gym.updateInformation(name, address);
+        gym.updateInformation(categoryId, name, address);
 
 
         return gym;
